@@ -6,13 +6,10 @@ import ArrowMovable from "../traits/ArrowMovable";
 export default class Dick extends Model {
     _init() {
         this.textures = {
-            dick_up: PIXI.Texture.fromFrame('dick_up'),
-            dick_down: PIXI.Texture.fromFrame('dick_down'),
-            dick_left: PIXI.Texture.fromFrame('dick_left'),
-            dick_right: PIXI.Texture.fromFrame('dick_right'),
+            dick: PIXI.Texture.fromFrame('dick')
         };
         this.sprite = new PIXI.Sprite();
-        this.sprite.texture = this.textures.dick_up;
+        this.sprite.texture = this.textures.dick;
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.scale.x = 1;
         this.direction = -1;
@@ -29,6 +26,7 @@ export default class Dick extends Model {
         this._on('move_start', this.run.bind(this));
         this._on('move_end', this.stop.bind(this));
         Game.onloop.push(this._onLoop.bind(this));
+        window.d = this;
     }
 
     _handleKeys() {
@@ -75,22 +73,22 @@ export default class Dick extends Model {
 
     /** @private */
     turnLeft() {
-        this.sprite.texture = this.textures.dick_left;
+        this.sprite.rotation = Math.PI * 1.5;
     }
 
     /** @private */
     turnRight() {
-        this.sprite.texture = this.textures.dick_right;
+        this.sprite.rotation = Math.PI * 0.5;
     }
 
     /** @private */
     turnUp() {
-        this.sprite.texture = this.textures.dick_up;
+        this.sprite.rotation = 0;
     }
 
     /** @private */
     turnDown() {
-        this.sprite.texture = this.textures.dick_down;
+        this.sprite.rotation = Math.PI;
     }
 
     /** @private */

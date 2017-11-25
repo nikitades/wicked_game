@@ -20,14 +20,8 @@ export default class Game {
                 PIXI.loader
                     .add([
                         {name: 'clouds', url: './sprites/clouds.png'},
-                        {name: 'dick_up', url: './sprites/piskel_up.png'},
-                        {name: 'dick_down', url: './sprites/piskel_down.png'},
-                        {name: 'dick_left', url: './sprites/piskel_left.png'},
-                        {name: 'dick_right', url: './sprites/piskel_right.png'},
-                        {name: 'ass_up', url: './sprites/ass_up.png'},
-                        {name: 'ass_down', url: './sprites/ass_down.png'},
-                        {name: 'ass_left', url: './sprites/ass_left.png'},
-                        {name: 'ass_right', url: './sprites/ass_right.png'},
+                        {name: 'dick', url: './sprites/piskel_up.png'},
+                        {name: 'ass', url: './sprites/ass_up.png'}
                     ])
                     .load(res)
             } catch (e) {
