@@ -8,7 +8,6 @@ import Scoreboard from "./Scoreboard";
 
 export default class Play extends State {
     constructor(amount = 2, difficulty = 1) {
-        console.log(amount, difficulty);
         super(amount, difficulty);
         this.amount = amount;
         World.game.difficulty = difficulty;
@@ -91,20 +90,23 @@ export default class Play extends State {
     }
 
     fade() {
-        let steps = 5;
-        setTimeout(function () {
-            for (let i = 0; i < steps; i++) {
-                setTimeout(function () {
-                    let coef = (steps - i - 1) / steps;
-                    this.clouds.sprite.alpha = coef;
-                    for (let i in this.asses) {
-                        this.asses[i].sprite.alpha = coef;
-                    }
-                    this.healthbar.sprite.alpha = coef;
-                    this.dick.sprite.alpha = coef;
-                }.bind(this), World.game.speed * 20 * (i + 1));
-            }
-        }.bind(this), 250);
+        return new Promise(res => {
+            let steps = 5;
+            setTimeout(function () {
+                for (let i = 0; i < steps; i++) {
+                    setTimeout(function () {
+                        let coef = (steps - i - 1) / steps;
+                        this.clouds.sprite.alpha = coef;
+                        for (let i in this.asses) {
+                            this.asses[i].sprite.alpha = coef;
+                        }
+                        this.healthbar.sprite.alpha = coef;
+                        this.dick.sprite.alpha = coef;
+                        if (i === steps.length - 1) res();
+                    }.bind(this), World.game.speed * 20 * (i + 1));
+                }
+            }.bind(this), 250);
+        })
     }
 
     lose(byTimeout = false) {
@@ -122,11 +124,19 @@ export default class Play extends State {
 
     win() {
         clearTimeout(this.safeTimeout);
-        this.fade();
-        let steps = 5;
-        setTimeout(function () {
-            delete World.game.state;
-            World.game.state = new Play(Math.ceil(this.amount * 1.5), World.game.difficulty + 1);
-        }.bind(this), World.game.speed * 20 * steps + 500);
+        this.fade().then(function () {
+            alert('here!');
+            setTimeout(function () {
+                for (let i in this.asses) {
+                    World.game.stage.removeChild(this.asses[i].sprite);
+                    World.game.stage.removeChild(this.dick.sprite);
+                    World.game.stage.removeChild(this.healthbar.sprite);
+                }
+            }.bind(this), World.game.speed * 100 + 500);
+            setTimeout(function () {
+                delete World.game.state;
+                World.game.state = new Play(Math.ceil(this.amount * 1.5), World.game.difficulty + 1);
+            }.bind(this), World.game.speed * 100 + 1000);
+        }.bind(this));
     }
 }
