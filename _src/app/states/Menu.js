@@ -78,6 +78,7 @@ export default class Menu extends State {
             for (let i in this.buttons) {
                 let btn = this.buttons[i];
                 if (btn.isSelected()) {
+                    btn.highlight();
                     btn.resolve();
                     return;
                 }

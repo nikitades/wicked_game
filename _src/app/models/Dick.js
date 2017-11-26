@@ -19,6 +19,7 @@ export default class Dick extends Model {
         this.direction = 0;
         this.maxHP = 100;
         this.hp = this.maxHP;
+        this.maxSpeed = 3;
         this.disabled = false;
 
         World.game.onloop.push(this._onLoop.bind(this));
@@ -58,7 +59,7 @@ export default class Dick extends Model {
         if (this.sprite.position.x + 16 > World.game.width) {
             this.sprite.position.x = World.game.width - 16;
             this.stopX();
-        } else this.sprite.vx = 5;
+        } else this.sprite.vx = this.maxSpeed;
     }
 
     /** @private */
@@ -68,7 +69,7 @@ export default class Dick extends Model {
         if (this.sprite.position.x - 16 < 0) {
             this.sprite.position.x = 0;
             this.stopX();
-        } else this.sprite.vx = -5;
+        } else this.sprite.vx = -this.maxSpeed;
     }
 
     /** @private */
@@ -83,7 +84,7 @@ export default class Dick extends Model {
         if (this.sprite.position.y - 16 < 0) {
             this.sprite.position.y = 0;
             this.stopY();
-        } else this.sprite.vy = -5;
+        } else this.sprite.vy = -this.maxSpeed;
     }
 
     /** @private */
@@ -93,7 +94,7 @@ export default class Dick extends Model {
         if (this.sprite.position.y + 16 > World.game.height) {
             this.sprite.position.y = World.game.height - 16;
             this.stopY();
-        } else this.sprite.vy = 5;
+        } else this.sprite.vy = this.maxSpeed;
     }
 
     /** @private */
@@ -138,7 +139,6 @@ export default class Dick extends Model {
     suffer() {
         this.hp -= 34;
         World.game.state.healthbar.update(this.hp);
-        console.log(this.hp);
         this.strafeBack();
         if (this.hp < 0) this.die();
     }

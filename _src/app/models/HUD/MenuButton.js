@@ -33,6 +33,13 @@ export default class MenuButton {
         this.selected = true;
     }
 
+    highlight() {
+        this.label.style.fontWeight = 'bold';
+        this.label.style.fontSize = 24;
+        this.bg.texture = PIXI.Texture.EMPTY;
+    }
+
+
     unselect() {
         this.bg.texture = PIXI.Texture.EMPTY;
         this.label.style.fill = 0xe079ac;

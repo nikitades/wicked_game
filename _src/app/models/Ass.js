@@ -24,7 +24,8 @@ export default class Ass extends Model {
         //whole ass
         this.background = new Pixi.Sprite();
         this.background.texture = this.textures.ass;
-        this.sprite.rotation = Math.PI * Math.ceil(Math.random() * 4) / 2;
+        this.direction = Math.floor(Math.random() * 4);
+        this.sprite.rotation = Math.PI * ((this.direction) / 2);
 
         //asshole
         this.hitzone = new Pixi.Sprite();
@@ -50,9 +51,26 @@ export default class Ass extends Model {
         this.background.pivot.set(32, 32);
     }
 
+    behave() {
+        let delta = Math.random() > 0.5 ? 1 : -1;
+        this.rotate(this.direction + delta);
+
+        let newX = Math.floor(Math.random() * 100) - 50;
+        let newY = Math.floor(Math.random() * 100) - 50;
+        if (this.sprite.x + newX < 32) newX = 0;
+        if (this.sprite.y + newY < 32) newY = 0;
+        if (this.sprite.x + newX + 32 > World.game.width) newX = 0;
+        if (this.sprite.y + newY + 32 > World.game.height) newY = 0;
+        this.jumpTo(newX, newY);
+    }
+
     /** @inherited */
     _onLoop() {
-        // this.sprite.rotation += 0.05;
+        let curDate = new Date();
+        if (!this.lastBehaviour || this.lastBehaviour < (curDate - World.game.speed * (50 * (1 / World.game.difficulty)))) {
+            this.lastBehaviour = curDate;
+            this.behave();
+        }
     }
 
     die() {
@@ -65,8 +83,33 @@ export default class Ass extends Model {
             }.bind(this), World.game.speed * i * 10);
         }
         setTimeout(function () {
-            console.log('removed');
             World.game.stage.removeChild(this.sprite);
         }.bind(this), World.game.speed * 10 * steps);
+    }
+
+    rotate(direction) {
+        if (direction > 3) direction = 2;
+        if (direction < 0) direction = 1;
+        let cw = direction > this.direction;
+        let steps = 20;
+        for (let i = 0; i < steps; i++) {
+            setTimeout(function () {
+                let delta = (cw ? 1 : -1) * (i + 1) / steps;
+                this.sprite.rotation = Math.PI * ((this.direction + delta) / 2)
+            }.bind(this), World.game.speed * i);
+        }
+        setTimeout(function () {
+            this.direction = direction;
+        }.bind(this), World.game.speed * steps - 1);
+    }
+
+    jumpTo(newX, newY) {
+        let steps = 20;
+        for (let i = 0; i < steps; i++) {
+            setTimeout(function () {
+                this.sprite.position.x += (newX / steps);
+                this.sprite.position.y += (newY / steps);
+            }.bind(this), World.game.speed * i);
+        }
     }
 }
