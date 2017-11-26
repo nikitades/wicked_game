@@ -1,16 +1,21 @@
 import * as PIXI from "pixi.js";
 import Key from "./Key";
+import World from "./World";
 
 export default class Game {
     constructor() {
-        this.renderer = PIXI.autoDetectRenderer(640, 480);
-        this.stage = Game.stage = new PIXI.Container();
+        this.width = 640;
+        this.height = 480;
+        this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
+        this.stage = new PIXI.Container();
         document.getElementById('screen').appendChild(this.renderer.view);
         this.renderer.render(this.stage);
-        Game.cache = PIXI.utils.TextureCache;
-        Game.r = PIXI.loader.resources;
-        Game.onloop = [];
-        Game.speed = 1;
+        this.cache = PIXI.utils.TextureCache;
+        this.r = PIXI.loader.resources;
+        this.onloop = [];
+        this.difficulty = 1; //1, 2, 3
+        this.speed = 25; //25 is ok
+        this.speed = this.speed * (1 + this.difficulty / 5);
         this.cacheTextures().then(this.loop.bind(this));
     }
 
@@ -20,8 +25,11 @@ export default class Game {
                 PIXI.loader
                     .add([
                         {name: 'clouds', url: './sprites/clouds.png'},
+                        {name: 'menu_bg', url: './sprites/menu_bg.jpg'},
                         {name: 'dick', url: './sprites/piskel_up.png'},
-                        {name: 'ass', url: './sprites/ass_up.png'}
+                        {name: 'ass', url: './sprites/ass_up.png'},
+                        {name: 'red', url: './sprites/red.png'},
+                        {name: 'hbbg', url: './sprites/healthbar_bg.png'},
                     ])
                     .load(res)
             } catch (e) {
@@ -38,8 +46,8 @@ export default class Game {
             }
             this.state.run();
         }
-        for (let i in Game.onloop) {
-            let f = Game.onloop[i];
+        for (let i in this.onloop) {
+            let f = this.onloop[i];
             if (typeof f === 'function') f();
         }
         this.renderer.render(this.stage);

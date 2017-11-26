@@ -1,52 +1,74 @@
 import Model from "./Model";
-import Game from "../core/Game";
+import World from "../core/World";
 import * as PIXI from "pixi.js";
 import ArrowMovable from "../traits/ArrowMovable";
+import Strafeable from "../traits/Strafeable";
+import EventDriveable from "../traits/EventDriveable";
 
 export default class Dick extends Model {
+    /** @inherited */
     _init() {
         this.textures = {
             dick: PIXI.Texture.fromFrame('dick')
         };
-        this.sprite = new PIXI.Sprite();
-        this.sprite.texture = this.textures.dick;
-        this.sprite.anchor.set(0.5, 0.5);
-        this.sprite.scale.x = 1;
-        this.direction = -1;
-        this._on('up', this.moveUp.bind(this));
-        this._on('up_end', this.stopY.bind(this));
-        this._on('down', this.moveDown.bind(this));
-        this._on('down_end', this.stopY.bind(this));
-        this._on('left', this.moveLeft.bind(this));
-        this._on('turn_left', this, this.turnLeft.bind(this));
-        this._on('left_end', this.stopX.bind(this));
-        this._on('right', this.moveRight.bind(this));
-        this._on('turn_right', this.turnRight.bind(this));
-        this._on('right_end', this.stopX.bind(this));
-        this._on('move_start', this.run.bind(this));
-        this._on('move_end', this.stop.bind(this));
-        Game.onloop.push(this._onLoop.bind(this));
+
+        this.manageSprites();
+        this.manageEvents();
+        this.strafeBack = Strafeable.bind(this);
+
+        this.direction = 0;
+        this.maxHP = 100;
+        this.hp = this.maxHP;
+        this.disabled = false;
+
+        World.game.onloop.push(this._onLoop.bind(this));
         window.d = this;
     }
 
+    manageEvents() {
+        EventDriveable.call(this);
+    }
+
+    manageSprites() {
+        this.sprite = new PIXI.Container();
+        this.sprite.pivot.set(16, 16);
+        this.dick = new PIXI.Sprite(this.textures.dick);
+        this.hitzone = new PIXI.Sprite(PIXI.Texture.EMPTY);
+        this.hitzone.width = 16;
+        this.hitzone.height = 8;
+        this.hitzone.position.set(8, 0);
+        this.sprite.addChild(this.dick);
+        this.sprite.addChild(this.hitzone);
+    }
+
+    /** @inherited */
     _handleKeys() {
         ArrowMovable.call(this);
     }
 
+    /** @inherited */
     _onLoop() {
 
     }
 
     /** @private */
     moveRight() {
-        this.sprite.vx = 5;
+        if (this.disabled) return this.stopX();
         this.turnRight();
+        if (this.sprite.position.x + 16 > World.game.width) {
+            this.sprite.position.x = World.game.width - 16;
+            this.stopX();
+        } else this.sprite.vx = 5;
     }
 
     /** @private */
     moveLeft() {
-        this.sprite.vx = -5;
+        if (this.disabled) return this.stopX();
         this.turnLeft();
+        if (this.sprite.position.x - 16 < 0) {
+            this.sprite.position.x = 0;
+            this.stopX();
+        } else this.sprite.vx = -5;
     }
 
     /** @private */
@@ -56,14 +78,22 @@ export default class Dick extends Model {
 
     /** @private */
     moveUp() {
-        this.sprite.vy = -5;
+        if (this.disabled) return this.stopY();
         this.turnUp();
+        if (this.sprite.position.y - 16 < 0) {
+            this.sprite.position.y = 0;
+            this.stopY();
+        } else this.sprite.vy = -5;
     }
 
     /** @private */
     moveDown() {
-        this.sprite.vy = 5;
+        if (this.disabled) return this.stopY();
         this.turnDown();
+        if (this.sprite.position.y + 16 > World.game.height) {
+            this.sprite.position.y = World.game.height - 16;
+            this.stopY();
+        } else this.sprite.vy = 5;
     }
 
     /** @private */
@@ -73,21 +103,25 @@ export default class Dick extends Model {
 
     /** @private */
     turnLeft() {
+        this.direction = 3;
         this.sprite.rotation = Math.PI * 1.5;
     }
 
     /** @private */
     turnRight() {
+        this.direction = 1;
         this.sprite.rotation = Math.PI * 0.5;
     }
 
     /** @private */
     turnUp() {
+        this.direction = 0;
         this.sprite.rotation = 0;
     }
 
     /** @private */
     turnDown() {
+        this.direction = 2;
         this.sprite.rotation = Math.PI;
     }
 
@@ -99,5 +133,17 @@ export default class Dick extends Model {
     /** @private */
     stop() {
         // this.sprite.texture = this.textures.dick;
+    }
+
+    suffer() {
+        this.hp -= 34;
+        World.game.state.healthbar.update(this.hp);
+        console.log(this.hp);
+        this.strafeBack();
+        if (this.hp < 0) this.die();
+    }
+
+    die() {
+        World.game.state.lose();
     }
 }

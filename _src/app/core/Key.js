@@ -1,4 +1,4 @@
-import Game from "./Game";
+import World from "./World";
 
 export default class Key {
     install() {
@@ -22,7 +22,7 @@ export default class Key {
                     }
                 }
             };
-            Game.onloop.push(Key.handle);
+            World.game.onloop.push(Key.handle);
         }
         Key.pressed = Key.pressed || [];
         Key.codes = Key.codes || {};
