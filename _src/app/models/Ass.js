@@ -57,6 +57,9 @@ export default class Ass extends Model {
 
 	behave() {
 		let delta = Math.random() > 0.5 ? 1 : -1;
+		if (Math.abs(this.direction - this.direction + delta) !== 1) {
+			console.log(this.direction, this.direction + delta);
+		}
 		this.rotate(this.direction + delta);
 
 		let newX = Math.floor(Math.random() * 100) - 50;
@@ -68,10 +71,14 @@ export default class Ass extends Model {
 		this.jumpTo(newX, newY);
 	}
 
+	getRefreshTime() {
+		return World.game.speed * (75 * (1 / World.game.difficulty));
+	}
+
 	/** @inherited */
 	_onLoop() {
 		let curDate = new Date();
-		if (!this.lastBehaviour || this.lastBehaviour < (curDate - World.game.speed * (50 * (1 / World.game.difficulty)))) {
+		if (!this.lastBehaviour || this.lastBehaviour < (curDate - this.getRefreshTime())) {
 			this.lastBehaviour = curDate;
 			this.behave();
 		}
@@ -100,11 +107,11 @@ export default class Ass extends Model {
 			setTimeout(function () {
 				let delta = (cw ? 1 : -1) * (i + 1) / steps;
 				this.sprite.rotation = Math.PI * ((this.direction + delta) / 2)
-			}.bind(this), World.game.speed * i);
+			}.bind(this), this.getRefreshTime() / steps * i);
 		}
 		setTimeout(function () {
 			this.direction = direction;
-		}.bind(this), World.game.speed * steps - 1);
+		}.bind(this), this.getRefreshTime());
 	}
 
 	jumpTo(newX, newY) {
@@ -113,7 +120,7 @@ export default class Ass extends Model {
 			setTimeout(function () {
 				this.sprite.position.x += (newX / steps);
 				this.sprite.position.y += (newY / steps);
-			}.bind(this), World.game.speed * i);
+			}.bind(this), this.getRefreshTime() / steps * i);
 		}
 	}
 }
