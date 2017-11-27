@@ -99,12 +99,12 @@ export default class Menu extends State {
                     let btn = this.buttons[i];
                     btn.sprite.alpha = coef;
                 }
-            }.bind(this), (i + 1) * World.game.speed * 20);
+            }.bind(this), (i + 1) * World.game.speed * 5);
         }
         setTimeout(function () {
             delete World.game.state;
             World.game.state = new Play();
-        }.bind(this), 5 * World.game.speed * 20)
+        }.bind(this), 5 * World.game.speed * 5)
     }
 
     records() {

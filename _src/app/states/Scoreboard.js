@@ -1,6 +1,7 @@
 import State from "./State";
 import World from '../core/World';
 import Clouds2 from "../models/Backgrounds/Clouds2";
+import * as PIXI from "pixi.js";
 
 export default class Scoreboard extends State {
     constructor(win, byTimeout) {
@@ -16,12 +17,12 @@ export default class Scoreboard extends State {
         for (let i = 0; i < steps; i++) {
             setTimeout(function () {
                 this.clouds.sprite.alpha += 0.05;
-            }.bind(this), (i + 1) * World.game.speed * 20);
+            }.bind(this), (i + 1) * World.game.speed * 5);
         }
         setTimeout(function () {
             World.game.stage.addChild(this.congrats);
             World.game.stage.addChild(this.score);
-        }.bind(this), World.game.speed * 20 * 4);
+        }.bind(this), World.game.speed * 5 * 4);
 
         //конец игры
         this.congrats = new PIXI.Text('Конец игры', {
