@@ -41,7 +41,7 @@ export default class Menu extends State {
 
         this.keys = {};
         this.in_move = false;
-        ArrowMovable.call(this);
+        setTimeout(ArrowMovable.bind(this), 100);
         this._on('up', function () {
             if (this.in_move) return;
             this.in_move = true;
@@ -88,6 +88,20 @@ export default class Menu extends State {
         });
     }
 
+    clear() {
+        for (let i in this.buttons) {
+            let btn = this.buttons[i];
+            World.game.stage.removeChild(btn.sprite);
+        }
+        World.game.stage.removeChild(this.greeting.sprite);
+        for (let i in this.keys) {
+            if (!this.keys.hasOwnProperty(i)) continue;
+            let key = this.keys[i];
+            key.dismount();
+            delete this.keys[i];
+        }
+    }
+
     start() {
         let steps = 4;
         for (let i = 0; i < steps; i++) {
@@ -102,6 +116,7 @@ export default class Menu extends State {
             }.bind(this), (i + 1) * World.game.speed * 5);
         }
         setTimeout(function () {
+            this.clear();
             delete World.game.state;
             World.game.state = new Play();
         }.bind(this), 5 * World.game.speed * 5)

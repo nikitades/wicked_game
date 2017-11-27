@@ -31,6 +31,14 @@ export default class Key {
         Key.keys = Key.keys || [];
     }
 
+    dismount() {
+        for (let i in Key.codes[this.code]) {
+            if (!Key.codes[this.code].hasOwnProperty(i)) continue;
+            let key = Key.codes[this.code][i];
+            if (key === this) delete Key.codes[this.code][i];
+        }
+    }
+
     static handle() {
         for (let i in Key.pressed) {
             let code = Key.pressed[i];

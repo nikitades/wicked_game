@@ -7,13 +7,22 @@ import HealthBar from "../models/HUD/HealthBar";
 import Scoreboard from "./Scoreboard";
 
 export default class Play extends State {
-	constructor(amount = 2, difficulty = 1) {
+	constructor(amount = 1, difficulty = 1) {
 		super(amount, difficulty);
 		this.amount = amount;
 		World.game.difficulty = difficulty;
 	}
 
 	init() {
+	    window.win = this.win.bind(this);
+	    window.lose = this.lose.bind(this);
+
+	    //пропсы
+        this.timeouts = {
+            safe: 15000000
+        };
+
+
 		//фон
 		World.game.startTime = World.game.startTime || new Date();
 		World.game.score = World.game.score || 0;
@@ -89,7 +98,7 @@ export default class Play extends State {
 
 	renew() {
 		if (this.safeTimeout) clearTimeout(this.safeTimeout);
-		this.safeTimeout = setTimeout(this.lose.bind(this, true), 15000);
+		this.safeTimeout = setTimeout(this.lose.bind(this, true), this.timeouts.safe);
 	}
 
 	fade() {
@@ -115,6 +124,14 @@ export default class Play extends State {
 		})
 	}
 
+	clear() {
+        for (let i in this.asses) {
+            World.game.stage.removeChild(this.asses[i].sprite);
+            World.game.stage.removeChild(this.dick.sprite);
+            World.game.stage.removeChild(this.healthbar.sprite);
+        }
+    }
+
 	lose(byTimeout = false) {
 		clearTimeout(this.safeTimeout);
 		this.fade().then(function () {
@@ -126,17 +143,11 @@ export default class Play extends State {
 	win() {
 		clearTimeout(this.safeTimeout);
 		this.fade().then(function () {
-			setTimeout(function () {
-				for (let i in this.asses) {
-					World.game.stage.removeChild(this.asses[i].sprite);
-					World.game.stage.removeChild(this.dick.sprite);
-					World.game.stage.removeChild(this.healthbar.sprite);
-				}
-			}.bind(this), 100);
+            this.clear();
 			setTimeout(function () {
 				delete World.game.state;
 				World.game.state = new Play(Math.ceil(this.amount * 1.5), World.game.difficulty + 1);
-			}.bind(this), 200);
+			}.bind(this), 100);
 		}.bind(this));
 	}
 }

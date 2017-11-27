@@ -2,6 +2,8 @@ import State from "./State";
 import World from '../core/World';
 import Clouds2 from "../models/Backgrounds/Clouds2";
 import * as PIXI from "pixi.js";
+import Key from "../core/Key";
+import Menu from "./Menu";
 
 export default class Scoreboard extends State {
     constructor(win, byTimeout) {
@@ -59,5 +61,30 @@ export default class Scoreboard extends State {
             World.game.width / 2 - this.score.width / 2,
             100
         );
+
+        this.keys = {};
+        this.keys.enter = new Key(13, function () {
+            if (this.done) return;
+            this.done = true;
+            let steps = 4;
+            for (let i = 0; i < steps; i++) {
+                setTimeout(function () {
+                    console.log(i);
+                    let coef = 1 - (i + 1) / steps;
+                    this.clouds.sprite.alpha = coef;
+                    this.congrats.alpha = coef;
+                    this.score.alpha = coef;
+                }.bind(this), World.game.speed * 5 * i);
+            }
+            setTimeout(function () {
+                World.game.stage.removeChild(this.congrats);
+                World.game.stage.removeChild(this.score);
+                delete this.keys;
+                delete World.game.state;
+                World.game.state = new Menu();
+            }.bind(this), World.game.speed * 20);
+        }.bind(this), function () {
+
+        }.bind(this));
     }
 }
