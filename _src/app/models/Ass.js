@@ -19,6 +19,8 @@ export default class Ass extends Model {
         this.wasHit = false;
         this.dying = false;
 
+        this.movementTimeouts = [];
+
         //container
         this.sprite = new Pixi.Container();
         this.sprite.model = this;
@@ -29,6 +31,7 @@ export default class Ass extends Model {
         this.background = new Pixi.Sprite();
         this.background.texture = this.textures.ass;
         this.direction = Math.floor(Math.random() * 4);
+        this.spriteDirection = this.direction;
         this.sprite.rotation = Math.PI * ((this.direction) / 2);
 
         //asshole
@@ -57,9 +60,6 @@ export default class Ass extends Model {
 
     behave() {
         let delta = Math.random() > 0.5 ? 1 : -1;
-        if (Math.abs(this.direction - this.direction + delta) !== 1) {
-            console.log(this.direction, this.direction + delta);
-        }
         this.rotate(delta);
 
         let newX = Math.floor(Math.random() * 100) - 50;
@@ -87,6 +87,7 @@ export default class Ass extends Model {
     die() {
         if (this.dying) return;
         this.dying = true;
+        this.onloopClear();
         let steps = 3;
         for (let i = 0; i < steps; i++) {
             setTimeout(function () {
@@ -99,20 +100,22 @@ export default class Ass extends Model {
     }
 
     rotate(delta) {
-        let direction = this.direction + delta;
-        if (direction > 3) direction = Math.abs(direction) - Math.floor(Math.abs(direction)) + 2;
-        if (direction < 0) direction = Math.abs(direction) - Math.floor(Math.abs(direction)) + 1;
         let steps = 20;
-        for (let i = 0; i < steps; i++) {
-            setTimeout(function () {
-                //TODO: переписать тут всё нахуй
-                let tempRotation = ((this.direction - direction) / steps) * (i + 1);
-                this.sprite.rotation = Math.PI / 2 * tempRotation;
-            }.bind(this), (this.getRefreshTime() / (steps - 1)) * i);
+        for (let i in this.movementTimeouts) {
+            clearTimeout(this.movementTimeouts[i]);
         }
-        setTimeout(function () {
-            this.direction = direction;
-        }.bind(this), this.getRefreshTime());
+        for (let i = 0; i < steps; i++) {
+            this.movementTimeouts.push(setTimeout(function () {
+                this.spriteDirection = this.direction + i / steps * delta;
+                this.sprite.rotation = Math.PI / 2 * this.spriteDirection;
+            }.bind(this), ((this.getRefreshTime() - World.game.speed) / steps) * i));
+        }
+        this.movementTimeouts.push(setTimeout(function () {
+            let nd = this.direction + delta;
+            if (nd < 0) nd = 3;
+            if (nd > 3) nd = 0;
+            this.direction = nd;
+        }.bind(this), this.getRefreshTime() - World.game.speed));
     }
 
     jumpTo(newX, newY) {

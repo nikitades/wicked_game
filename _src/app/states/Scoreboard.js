@@ -69,7 +69,6 @@ export default class Scoreboard extends State {
             let steps = 4;
             for (let i = 0; i < steps; i++) {
                 setTimeout(function () {
-                    console.log(i);
                     let coef = 1 - (i + 1) / steps;
                     this.clouds.sprite.alpha = coef;
                     this.congrats.alpha = coef;

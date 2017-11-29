@@ -1,4 +1,5 @@
 import World from "./World";
+import OnloopPushable from "../traits/OnloopPushable";
 
 export default class Key {
     install() {
@@ -22,7 +23,8 @@ export default class Key {
                     }
                 }
             };
-            World.game.onloop.push(Key.handle);
+            OnloopPushable.call(this);
+            this.onloopPush(Key.handle);
         }
         Key.pressed = Key.pressed || [];
         Key.codes = Key.codes || {};

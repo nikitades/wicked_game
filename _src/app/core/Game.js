@@ -12,7 +12,7 @@ export default class Game {
         this.renderer.render(this.stage);
         this.cache = PIXI.utils.TextureCache;
         this.r = PIXI.loader.resources;
-        this.onloop = [];
+        this.onloop = {};
         this.difficulty = 1; //1, 2, 3
         this.speed = 25; //25 is ok
         this.speed = this.speed * (1 + this.difficulty / 5);

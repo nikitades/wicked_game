@@ -21,8 +21,6 @@ export default class Dick extends Model {
         this.hp = this.maxHP;
         this.maxSpeed = 3;
         this.disabled = false;
-
-        World.game.onloop.push(this._onLoop.bind(this));
         window.d = this;
     }
 
