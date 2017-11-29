@@ -128,14 +128,16 @@ export default class Play extends State {
     clear() {
         for (let i in this.asses) {
             World.game.stage.removeChild(this.asses[i].sprite);
-            World.game.stage.removeChild(this.dick.sprite);
-            World.game.stage.removeChild(this.healthbar.sprite);
+            delete this.asses[i];
         }
+        World.game.stage.removeChild(this.dick.sprite);
+        World.game.stage.removeChild(this.healthbar.sprite);
     }
 
     lose(byTimeout = false) {
         clearTimeout(this.safeTimeout);
         this.fade().then(function () {
+            this.clear();
             delete World.game.state;
             World.game.state = new Scoreboard(false, byTimeout);
         }.bind(this));

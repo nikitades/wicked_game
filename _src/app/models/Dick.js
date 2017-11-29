@@ -17,7 +17,7 @@ export default class Dick extends Model {
         this.strafeBack = Strafeable.bind(this);
 
         this.direction = 0;
-        this.maxHP = 100000;
+        this.maxHP = 100;
         this.hp = this.maxHP;
         this.maxSpeed = 3;
         this.disabled = false;
