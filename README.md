@@ -6,7 +6,7 @@
 All the similarities with the real world should be treated as a pure coincidence. This game involves no real world entities. All the images are brought from the mere imagination of its' not totally sane creator.
 
 ## How to play
-1. Go to [http://major-design.ru/shame/](http://major-design.ru/shame/)
+1. Go to [http://major-design.ru/shame/](http://major-design.ru/shame/) (or [https://nikitades.github.io/wicked_game/](https://nikitades.github.io/wicked_game/) as a fallback address)
 2. Use your keyboard to play
 3. Now you are a Hero!
 4. Try to touch as much pink parts as it is possible for you
